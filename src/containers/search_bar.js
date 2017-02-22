@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { fetchWeather } from '../actions/index';
 
-export default class SearchBar extends Component {
+class SearchBar extends Component {
 	constructor(props) {
 	  super(props);
 	
@@ -11,12 +13,16 @@ export default class SearchBar extends Component {
 	}
 
 	onInputChange(e) {
-		this.setState({ term: event.target.value });
+		this.setState({ term: e.target.value });
 	}
 
 	onFormSubmit(e) {
 		e.preventDefault();
+		
 		//We need to go and fetch weather data here
+		this.props.fetchWeather(this.state.term)
+		//After action creator is called, resets the state of term to empty string
+		this.setState({ term: '' });
 	}
 
 	render() {
@@ -35,3 +41,11 @@ export default class SearchBar extends Component {
 		)
 	}
 }
+
+function mapDispatchToProps(dispatch) {
+	return bindActionCreators({ fetchWeather }, dispatch)
+}
+
+
+//First argument null pertains to state (redux standardization) - since this component container does not concern itself with state, null is the argument
+export default connect (null, mapDispatchToProps)(SearchBar);
